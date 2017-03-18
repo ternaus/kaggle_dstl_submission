@@ -155,14 +155,7 @@ def form_batch(X, y, batch_size):
     X_height = X.shape[2]
     X_width = X.shape[3]
 
-    for i in range(X.shape[0]):
-        random_width = random.randint(0, X_width - img_cols - 1)
-        random_height = random.randint(0, X_height - img_rows - 1)
-
-        y_batch[i] = y[i, :, random_height: random_height + img_rows, random_width: random_width + img_cols]
-        X_batch[i] = X[i, :, random_height: random_height + img_rows, random_width: random_width + img_cols]
-
-    for i in range(X.shape[0], batch_size):
+    for i in range(batch_size):
         random_width = random.randint(0, X_width - img_cols - 1)
         random_height = random.randint(0, X_height - img_rows - 1)
 
