@@ -200,8 +200,8 @@ def save_model(model, cross):
     json_string = model.to_json()
     if not os.path.isdir('cache'):
         os.mkdir('cache')
-    json_name = 'buildings_architecture_' + cross + '.json'
-    weight_name = 'buildings_model_weights_' + cross + '.h5'
+    json_name = 'architecture_' + cross + '.json'
+    weight_name = 'model_weights_' + cross + '.h5'
     open(os.path.join('cache', json_name), 'w').write(json_string)
     model.save_weights(os.path.join('cache', weight_name), overwrite=True)
 
@@ -249,7 +249,7 @@ if __name__ == '__main__':
     ]
 
     suffix = 'buildings_3_'
-    model.compile(optimizer=Nadam(lr=1e-3), loss=jaccard_coef_loss)
+    model.compile(optimizer=Nadam(lr=1e-3), loss=jaccard_coef_loss, metrics=['binary_crossentropy', jaccard_coef_int])
     model.fit_generator(batch_generator(X_train, y_train, batch_size, horizontal_flip=True, vertical_flip=True, swap_axis=True),
                         nb_epoch=nb_epoch,
                         verbose=1,
@@ -261,7 +261,7 @@ if __name__ == '__main__':
     save_history(history, suffix)
 
     suffix = 'buildings_4_'
-    model.compile(optimizer=Nadam(lr=1e-4), loss=jaccard_coef_loss)
+    model.compile(optimizer=Nadam(lr=1e-4), loss=jaccard_coef_loss, metrics=['binary_crossentropy', jaccard_coef_int])
     model.fit_generator(
         batch_generator(X_train, y_train, batch_size, horizontal_flip=True, vertical_flip=True, swap_axis=True),
         nb_epoch=nb_epoch,
