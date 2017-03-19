@@ -25,7 +25,22 @@ import tifffile as tiff
 import skimage.color as color
 from skimage.transform import rescale
 
-csv.field_size_limit(sys.maxsize)
+# dirty hacks from SO to allow loading of big cvs's
+# without decrement loop it crashes with C error
+# http://stackoverflow.com/questions/15063936/csv-error-field-larger-than-field-limit-131072
+maxInt = sys.maxsize
+decrement = True
+
+while decrement:
+    # decrease the maxInt value by factor 10
+    # as long as the OverflowError occurs.
+
+    decrement = False
+    try:
+        csv.field_size_limit(maxInt)
+    except OverflowError:
+        maxInt = int(maxInt/10)
+        decrement = True
 
 data_path = '../data'
 train_wkt = pd.read_csv(os.path.join(data_path, 'train_wkt_v4.csv'))
