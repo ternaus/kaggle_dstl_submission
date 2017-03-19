@@ -250,8 +250,10 @@ if __name__ == '__main__':
 
     suffix = 'track_3_'
     try:
+        print('Loading last checkpoint')
         model.load_weights('unet_tmp.hdf5')
     except:
+        print('No checkpoint, passing')
         pass
     model.compile(optimizer=Nadam(lr=1e-3), loss=jaccard_coef_loss, metrics=['binary_crossentropy', jaccard_coef_int])
     suffix = 'track_3_'
