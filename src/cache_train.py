@@ -21,7 +21,7 @@ shapes = pd.read_csv(os.path.join(data_path, '3_shapes.csv'))
 
 
 def cache_train_16():
-    print 'num_train_images =', train_wkt['ImageId'].nunique()
+    print('num_train_images =', train_wkt['ImageId'].nunique())
 
     train_shapes = shapes[shapes['image_id'].isin(train_wkt['ImageId'].unique())]
 
@@ -59,7 +59,8 @@ def cache_train_16():
         ids += [image_id]
         i += 1
 
-    f['train_ids'] = ids
+    # fix from there: https://github.com/h5py/h5py/issues/441
+    f['train_ids'] = np.array(ids).astype('|S9')
 
     f.close()
 

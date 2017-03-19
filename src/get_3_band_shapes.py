@@ -19,6 +19,7 @@ heights_3 = []
 
 
 for file_name in tqdm(sorted(os.listdir(three_band_path))):
+    # TODO: crashes if there anything except tiff files in folder (for ex, QGIS creates a lot of aux files)
     image_id = file_name.split('.')[0]
     image_3 = tiff.imread(os.path.join(three_band_path, file_name))
 
