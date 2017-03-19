@@ -19,7 +19,6 @@ from keras.backend import binary_crossentropy
 
 import datetime
 import os
-from numba import jit
 
 import random
 
@@ -34,7 +33,7 @@ smooth = 1e-12
 num_channels = 16
 num_mask_channels = 1
 
-@jit
+
 def jaccard_coef(y_true, y_pred):
     intersection = K.sum(y_true * y_pred, axis=[0, -1, -2])
     sum_ = K.sum(y_true + y_pred, axis=[0, -1, -2])
@@ -44,7 +43,6 @@ def jaccard_coef(y_true, y_pred):
     return K.mean(jac)
 
 
-@jit
 def jaccard_coef_int(y_true, y_pred):
     y_pred_pos = K.round(K.clip(y_pred, 0, 1))
 
@@ -56,7 +54,6 @@ def jaccard_coef_int(y_true, y_pred):
     return K.mean(jac)
 
 
-@jit
 def jaccard_coef_loss(y_true, y_pred):
     return -K.log(jaccard_coef(y_true, y_pred)) + binary_crossentropy(y_pred, y_true)
 
@@ -140,7 +137,7 @@ def get_unet0():
 
     return model
 
-@jit
+
 def flip_axis(x, axis):
     x = np.asarray(x).swapaxes(axis, 0)
     x = x[::-1, ...]
@@ -148,7 +145,6 @@ def flip_axis(x, axis):
     return x
 
 
-@jit
 def form_batch(X, y, batch_size):
     X_batch = np.zeros((batch_size, num_channels, img_rows, img_cols))
     y_batch = np.zeros((batch_size, num_mask_channels, img_rows, img_cols))
@@ -166,7 +162,6 @@ def form_batch(X, y, batch_size):
     return X_batch, y_batch
 
 
-@jit
 def batch_generator(X, y, batch_size, horizontal_flip=False, vertical_flip=False, swap_axis=False):
     while True:
         X_batch, y_batch = form_batch(X, y, batch_size)
@@ -207,6 +202,9 @@ def save_model(model, cross):
 
 
 def save_history(history, suffix):
+    if not os.path.isdir('history'):
+        os.mkdir('history')
+
     filename = 'history/history_' + suffix + '.csv'
     pd.DataFrame(history.history).to_csv(filename, index=False)
 
