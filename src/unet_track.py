@@ -195,8 +195,8 @@ def save_model(model, cross):
     json_string = model.to_json()
     if not os.path.isdir('cache'):
         os.mkdir('cache')
-    json_name = 'buildings_architecture_' + cross + '.json'
-    weight_name = 'buildings_model_weights_' + cross + '.h5'
+    json_name = 'architecture_' + cross + '.json'
+    weight_name = 'model_weights_' + cross + '.h5'
     open(os.path.join('cache', json_name), 'w').write(json_string)
     model.save_weights(os.path.join('cache', weight_name), overwrite=True)
 
