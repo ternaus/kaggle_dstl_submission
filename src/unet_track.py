@@ -237,7 +237,7 @@ if __name__ == '__main__':
 
     f.close()
 
-    batch_size = 128
+    batch_size = 96
     nb_epoch = 50
 
     history = History()
