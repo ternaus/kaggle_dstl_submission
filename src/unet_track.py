@@ -13,7 +13,7 @@ from keras.layers.normalization import BatchNormalization
 
 
 from keras.optimizers import Nadam
-from keras.callbacks import History
+from keras.callbacks import History, ModelCheckpoint
 import pandas as pd
 from keras.backend import binary_crossentropy
 
@@ -241,12 +241,20 @@ if __name__ == '__main__':
     nb_epoch = 50
 
     history = History()
+    model_checkpoint = ModelCheckpoint('unet_tmp.hdf5', monitor='loss', verbose=1, save_best_only=True)
+
     callbacks = [
         history,
+        model_checkpoint
     ]
 
     suffix = 'track_3_'
+    try:
+        model.load_weights('unet_tmp.hdf5')
+    except:
+        pass
     model.compile(optimizer=Nadam(lr=1e-3), loss=jaccard_coef_loss, metrics=['binary_crossentropy', jaccard_coef_int])
+    suffix = 'track_3_'
     model.fit_generator(batch_generator(X_train, y_train, batch_size, horizontal_flip=True, vertical_flip=True, swap_axis=True),
                         nb_epoch=nb_epoch,
                         verbose=1,
