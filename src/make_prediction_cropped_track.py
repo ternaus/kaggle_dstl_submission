@@ -12,8 +12,8 @@ import numpy as np
 
 
 def read_model(cross=''):
-    json_name = 'architecture_128_50_structures_3_' + cross + '.json'
-    weight_name = 'model_weights_128_50_structures_3_' + cross + '.h5'
+    json_name = 'architecture_128_50_track_3_' + cross + '.json'
+    weight_name = 'model_weights_128_50_track_3_' + cross + '.h5'
     model = model_from_json(open(os.path.join('../src/cache', json_name)).read())
     model.load_weights(os.path.join('../src/cache', weight_name))
     return model
@@ -101,7 +101,7 @@ for image_id in tqdm(test_ids):
 
     x_scaler, y_scaler = extra_functions.get_scalers(H, W, x_max, y_min)
 
-    mask_channel = 1
+    mask_channel = 3
     result += [(image_id, mask_channel + 1, mask2poly(new_mask, threashold, x_scaler, y_scaler))]
 
 submission = pd.DataFrame(result, columns=['ImageId', 'ClassType', 'MultipolygonWKT'])
@@ -110,4 +110,4 @@ submission = pd.DataFrame(result, columns=['ImageId', 'ClassType', 'Multipolygon
 sample = sample.drop('MultipolygonWKT', 1)
 submission = sample.merge(submission, on=['ImageId', 'ClassType'], how='left').fillna('MULTIPOLYGON EMPTY')
 
-submission.to_csv('temp_structures.csv', index=False)
+submission.to_csv('temp_track.csv', index=False)
