@@ -12,8 +12,8 @@ import numpy as np
 
 
 def read_model(cross=''):
-    json_name = 'architecture_128_50_structures_3_' + cross + '.json'
-    weight_name = 'model_weights_128_50_structures_3_' + cross + '.h5'
+    json_name = 'architecture_128_50_structures_4_' + cross + '.json'
+    weight_name = 'model_weights_128_50_structures_4_' + cross + '.h5'
     model = model_from_json(open(os.path.join('../src/cache', json_name)).read())
     model.load_weights(os.path.join('../src/cache', weight_name))
     return model
@@ -47,7 +47,7 @@ def flip_axis(x, axis):
 
 @jit
 def mask2poly(predicted_mask, threashold, x_scaler, y_scaler):
-    polygons = extra_functions.mask2polygons_layer(predicted_mask[0] > threashold, epsilon=0, min_area=10)
+    polygons = extra_functions.mask2polygons_layer(predicted_mask[0] > threashold, epsilon=0, min_area=5)
 
     polygons = shapely.affinity.scale(polygons, xfact=1.0 / x_scaler, yfact=1.0 / y_scaler, origin=(0, 0, 0))
     return shapely.wkt.dumps(polygons)
@@ -112,4 +112,4 @@ submission = pd.DataFrame(result, columns=['ImageId', 'ClassType', 'Multipolygon
 sample = sample.drop('MultipolygonWKT', 1)
 submission = sample.merge(submission, on=['ImageId', 'ClassType'], how='left').fillna('MULTIPOLYGON EMPTY')
 
-submission.to_csv('temp_structures_3.csv', index=False)
+submission.to_csv('temp_structures_4.csv', index=False)
