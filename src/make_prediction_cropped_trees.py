@@ -12,8 +12,8 @@ import numpy as np
 
 
 def read_model(cross=''):
-    json_name = 'architecture_128_50_trees_3_' + cross + '.json'
-    weight_name = 'model_weights_128_50_trees_3_' + cross + '.h5'
+    json_name = 'architecture_128_50_trees_2_' + cross + '.json'
+    weight_name = 'model_weights_128_50_trees_2_' + cross + '.h5'
     model = model_from_json(open(os.path.join('../src/cache', json_name)).read())
     model.load_weights(os.path.join('../src/cache', weight_name))
     return model
@@ -25,7 +25,7 @@ sample = pd.read_csv('../data/sample_submission.csv')
 data_path = '../data'
 num_channels = 16
 num_mask_channels = 1
-threashold = 0.3
+threashold = 0.1
 
 three_band_path = os.path.join(data_path, 'three_band')
 
@@ -96,8 +96,10 @@ for image_id in tqdm(test_ids):
                                                                num_masks=1,
                                                                num_channels=num_channels)
 
-    new_mask = (predicted_mask + flip_axis(predicted_mask_v, 1) + flip_axis(predicted_mask_h,
-                                                                            2) + predicted_mask_s.swapaxes(1, 2)) / 4.0
+    new_mask = np.power(predicted_mask *
+                        flip_axis(predicted_mask_v, 1) *
+                        flip_axis(predicted_mask_h, 2) *
+                        predicted_mask_s.swapaxes(1, 2), 0.25)
 
     x_scaler, y_scaler = extra_functions.get_scalers(H, W, x_max, y_min)
 
@@ -110,4 +112,4 @@ submission = pd.DataFrame(result, columns=['ImageId', 'ClassType', 'Multipolygon
 sample = sample.drop('MultipolygonWKT', 1)
 submission = sample.merge(submission, on=['ImageId', 'ClassType'], how='left').fillna('MULTIPOLYGON EMPTY')
 
-submission.to_csv('temp_trees_3.csv', index=False)
+submission.to_csv('temp_trees_2.csv', index=False)

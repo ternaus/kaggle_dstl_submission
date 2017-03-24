@@ -267,8 +267,8 @@ if __name__ == '__main__':
         history,
     ]
 
-    suffix = 'trees_3_'
-    model.compile(optimizer=Nadam(lr=1e-3), loss=jaccard_coef_loss, metrics=['binary_crossentropy', jaccard_coef_int])
+    suffix = 'trees_2_'
+    model.compile(optimizer=Nadam(lr=1e-2), loss=jaccard_coef_loss, metrics=['binary_crossentropy', jaccard_coef_int])
     model.fit_generator(batch_generator(X_train, y_train, batch_size, horizontal_flip=True, vertical_flip=True, swap_axis=True),
                         nb_epoch=nb_epoch,
                         verbose=1,
