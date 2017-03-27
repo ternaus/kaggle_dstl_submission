@@ -255,7 +255,7 @@ if __name__ == '__main__':
 
     y_train = np.array(f['train_mask'])[:, 2]
     y_train = np.expand_dims(y_train, 1)
-    print y_train.shape
+    print(y_train.shape)
 
     train_ids = np.array(f['train_ids'])
 
