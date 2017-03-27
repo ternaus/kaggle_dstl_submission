@@ -273,7 +273,6 @@ def make_water_submit_heur():
         image_id = row[0]
         class_i = row[1] - 1
         if class_i == 7:
-            # print(image_id, heur_water(image_id))
             index_type, threshold = heur_water(image_id)
             if threshold == -100:
                 df.iloc[idx, 2] = 'MULTIPOLYGON EMPTY'
@@ -322,15 +321,5 @@ for image_id in train_ids:
     scene_id = image_id[:4]
     scenes_in_train.add(scene_id)
 
-# всего рек в public'e = 0.00630*10*6*835*835 = 263551.05
-# всего рек в привате = 0.00565*10*26*835*835 = 1024223.525
-# итого: 1287774.575
-
-# всего озёр в паблике = 15060.06
-# всего озёр в привате = 52570.765
-# итого: 67630.765
-
-
 if __name__ == '__main__':
-    # find_index_and_threshhold()
     make_water_submit_heur()
