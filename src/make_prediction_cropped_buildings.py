@@ -52,20 +52,7 @@ def mask2poly(predicted_mask, threashold, x_scaler, y_scaler):
     return shapely.wkt.dumps(polygons)
 
 
-real_test_ids = ['6080_4_4', '6080_4_1', '6010_0_1', '6150_3_4', '6020_0_4', '6020_4_3',
-                 '6150_4_3', '6070_3_4', '6020_1_3', '6060_1_4', '6050_4_4', '6110_2_3',
-                 '6060_4_1', '6100_2_4', '6050_3_3', '6100_0_2', '6060_0_0', '6060_0_1',
-                 '6060_0_3', '6060_2_0', '6120_1_4', '6160_1_4', '6120_3_3', '6140_2_3',
-                 '6090_3_2', '6090_3_4', '6170_4_4', '6120_4_4', '6030_1_4', '6120_0_2',
-                 '6030_1_2', '6160_0_0']
-
-
 for image_id in tqdm(test_ids):
-    if image_id not in real_test_ids:
-        mask_channel = 0
-        result += [(image_id, mask_channel + 1, 'MULTIPOLYGON EMPTY')]
-        continue
-
     image = extra_functions.read_image_16(image_id)
 
     H = image.shape[1]
