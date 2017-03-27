@@ -1,5 +1,8 @@
 import pandas as pd
 import numpy as np
+# TODO: cleanup this file, as it is almost unused in current solution (only for water and only small number
+# of variables actually used)
+
 N_Cls = 10
 inDir = '../../data'
 DF = pd.read_csv(inDir + '/train_wkt_v4.csv')
@@ -10,23 +13,9 @@ smooth = 1e-12
 scene_ids = ['6010', '6020', '6030', '6040', '6050', '6060',
              '6070', '6080', '6090', '6100', '6110', '6120',
              '6130', '6140', '6150', '6160', '6170', '6180']
-scene_field_n_city = ['6020', '6130', '6060', '6030', '6150', '6110', '6140', '6120']
-scene_green_field_n_city = ['6100']
-
-scene_forest_river = ['6050', '6070', '6080']
-scene_forest = ['6010', '6040', '6180', '6090', '6160', '6170']
 
 train_ids = sorted(DF.ImageId.unique())
-train_ids_field_n_city = []
-train_ids_forest_river = []
-train_ids_forest = []
-for train_id in train_ids:
-    if train_id[:4] in scene_field_n_city:
-        train_ids_field_n_city.append(train_id)
-    if train_id[:4] in scene_forest_river:
-        train_ids_forest_river.append(train_id)
-    if train_id[:4] in scene_forest:
-        train_ids_forest.append(train_id)
+
 # Give short names, sensible colors and zorders to object types
 CLASSES = {
         0 : 'Bldg',
@@ -70,16 +59,6 @@ ZORDER = {
 channels = 'm'
 channels_count = 8
 weighting = 'random'
-# weighting = 'n01z3'
-
-
-
-
-
-# Frequently changing parameters:
-# train_ids = train_ids[0:25:5]
-# train_ids = ['6110_3_1', '6140_3_1']
-# train_ids = train_ids_forest
 
 ISZ = 80
 ISZ_mult = 3360 // ISZ # about 3350 = ISZ*ISZ_mult

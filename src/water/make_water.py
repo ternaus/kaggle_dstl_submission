@@ -5,6 +5,7 @@ import cv2
 import shapely
 import time
 import pandas as pd
+import numpy as np
 import os
 from shapely.geometry import MultiPolygon
 import shapely.affinity
@@ -78,99 +79,6 @@ def check_water(image_id, scores, class_i):
 
     return pixel_num,score_max, best_index_type, best_thr
 
-def make_submit_water(engine='opencv'):
-    predict_stats = []
-    # TODO add saving to pickle file
-    t0 = time.time()
-    print("make submission file")
-    df = pd.read_csv(os.path.join(inDir, 'sample_submission.csv'))
-    print(df.head())
-    # classes_in_images = pd.read_csv('classes_in_images.tsv', sep='\t')
-    # 6010, 6040,
-    slow_water = {'6020': ('rei', -1.8),
-                  '6130': ('rei', -0.65),
-
-                  '6110': ('rei', -1.8),
-                  '6140': ('rei', -0.68),
-
-                  '6060': ('ndvi2', -0.2),
-                  '6120': ('rei', -0.65),
-
-                  '6100': ('rei', -1), # also fast
-
-                  '6090': ('rei', -0.8), #also fast
-
-                  '6170': ('rei', -0.9)}
-
-    fast_water = {'6030': ('rei', -1.7),
-                  '6150': ('ndvi', 0.06),
-
-                  '6050': ('ndvi', 0.1),
-                  '6070': ('ndvi', 0.1),
-                  '6080': ('ndvi', 0.1),
-
-                  '6090': ('rei', -0.8), # also slow
-
-                  '6100': ('rei', -1), # also slow
-
-                  '6170': ('rei', -0.9)}
-
-    for idx, row in df.iterrows():
-        if idx % 10 == 0: print(idx)
-        image_id = row[0]
-        scene_id = image_id[:4]
-        class_i = row[1] - 1
-        # TODO one time hack to skip fast water
-        if class_i == 6 and scene_id in fast_water: # fast water
-            if scene_id in ['6100', '6090'] and image_id not in ['6100_1_2', '6100_2_2', '6090_4_3', '6090_3_4']:
-                scaled_pred_polygons = MultiPolygon()
-                df.iloc[idx, 2] = shapely.wkt.dumps(scaled_pred_polygons)
-                continue
-            msk = threshold_index(image_id, index_type=fast_water[scene_id][0], threshold=fast_water[scene_id][1])
-            pred_polygons = mask_to_polygons(msk, min_area=15, engine=engine, buffer_amount=1)
-
-        elif class_i == 7 and scene_id in slow_water:
-            if image_id in ['6170_4_3', '6170_4_4', '6100_1_2', '6100_2_2', '6090_4_3', '6090_3_4']:
-                scaled_pred_polygons = MultiPolygon()
-                df.iloc[idx, 2] = shapely.wkt.dumps(scaled_pred_polygons)
-                continue
-
-            msk = threshold_index(image_id, index_type=slow_water[scene_id][0], threshold=slow_water[scene_id][1])
-            pred_polygons = mask_to_polygons(msk, engine=engine, buffer_amount=2)
-
-        else:
-            scaled_pred_polygons = MultiPolygon()
-            df.iloc[idx, 2] = shapely.wkt.dumps(scaled_pred_polygons)
-            continue
-        print('ImageId:{}, class:{}, area:{}'.format(image_id, class_i, pred_polygons.area))
-        if True:
-            msk2 = mask_from_polygons(pred_polygons, msk.shape)
-            jaccard = np_jaccard(msk, msk2)
-            print('ImageId: {} jaccard: {:.2f}, area: {}, {}'.format(image_id, jaccard, np.sum(msk), np.sum(msk2)))
-            rgb = np.dstack((msk2, msk, np.zeros_like(msk)))
-            predict_stats.append([image_id, class_i, jaccard, np.sum(msk), np.sum(msk2)])
-
-            plt.imsave('check_submit/{}_pred.png'.format(image_id), rgb)
-
-        x_max = GS.loc[GS['ImageId'] == image_id, 'Xmax'].as_matrix()[0]
-        y_min = GS.loc[GS['ImageId'] == image_id, 'Ymin'].as_matrix()[0]
-
-        x_scaler, y_scaler = get_scalers(msk.shape, x_max, y_min)
-
-        scaled_pred_polygons = shapely.affinity.scale(pred_polygons, xfact=1.0 / x_scaler, yfact=1.0 / y_scaler,
-                                                      origin=(0, 0, 0))
-        df.iloc[idx, 2] = shapely.wkt.dumps(scaled_pred_polygons)
-    print(df.head())
-    stat_df = pd.DataFrame(predict_stats, columns=['image_id', 'class_i', 'jaccard', 'true_area', 'poly_area'])
-    stat_df.to_csv('check_submit/stats.csv')
-    print(stat_df.true_area.describe())
-    print(stat_df.poly_area.describe())
-    print(stat_df.true_area.sum())
-    print(stat_df.poly_area.sum())
-
-    df.to_csv('subm/{}_{}_channels.csv'.format('water_buf1_2', channels), index=False)
-    print('Finished in: {}'.format(time.time() - t0))
-
 
 def np_jaccard(y_true, y_pred):
     intersection = np.sum(y_true * y_pred)
@@ -192,6 +100,7 @@ def threshold_index(image_id, index_type, threshold, less=True):
 
 
 def load_m(image_id):
+    #TODO: warp_matrices_translate_3_m.pkl provided as part of the solution, to reproduce use correct_misalignment_only_m.py
     warp_matrices = pd.read_pickle('warp_matrices_translate_3_m.pkl')
     img_m = np.transpose(tiff.imread("sixteen_band/{}_{}.tif".format(image_id, 'M')), (1, 2, 0))
     raster_size = img_m.shape
@@ -305,7 +214,6 @@ def calc_thresholds_from_train():
 
 def heur_water(image_id):
 
-
     # thresholds calculated from train, using jaccard between thresholded index and mask
     # train_thresholds = find_index_and_threshhold()
     # hardcoded results from above to save computation time
@@ -358,13 +266,13 @@ def heur_water(image_id):
     return index_type, threshold
 
 
-def print_heur():
+def make_water_submit_heur():
     df = pd.read_csv(os.path.join(inDir, 'sample_submission.csv'))
 
     for idx, row in df.iterrows():
         image_id = row[0]
         class_i = row[1] - 1
-        if class_i == 7 and image_id in real_test_ids:
+        if class_i == 7:
             # print(image_id, heur_water(image_id))
             index_type, threshold = heur_water(image_id)
             if threshold == -100:
@@ -377,7 +285,7 @@ def print_heur():
             else:
                 df.iloc[idx, 2] = 'MULTIPOLYGON EMPTY'
                 continue
-        elif class_i == 6 and image_id in real_test_ids:
+        elif class_i == 6:
             index_type, threshold = heur_water(image_id)
             if threshold == -100:
                 df.iloc[idx, 2] = 'MULTIPOLYGON EMPTY'
@@ -407,16 +315,7 @@ def print_heur():
                                                       origin=(0, 0, 0))
         df.iloc[idx, 2] = shapely.wkt.dumps(scaled_pred_polygons)
 
-    df.to_csv('{}_indices.csv'.format('water_auto'), index=False)
-
-
-
-real_test_ids = ['6080_4_4', '6080_4_1', '6010_0_1', '6150_3_4', '6020_0_4', '6020_4_3',
-                 '6150_4_3', '6070_3_4', '6020_1_3', '6060_1_4', '6050_4_4', '6110_2_3',
-                 '6060_4_1', '6100_2_4', '6050_3_3', '6100_0_2', '6060_0_0', '6060_0_1',
-                 '6060_0_3', '6060_2_0', '6120_1_4', '6160_1_4', '6120_3_3', '6140_2_3',
-                 '6090_3_2', '6090_3_4', '6170_4_4', '6120_4_4', '6030_1_4', '6120_0_2',
-                 '6030_1_2', '6160_0_0']
+    df.to_csv('../{}_indices.csv'.format('water_auto'), index=False)
 
 scenes_in_train = set()
 for image_id in train_ids:
@@ -434,4 +333,4 @@ for image_id in train_ids:
 
 if __name__ == '__main__':
     # find_index_and_threshhold()
-    print_heur()
+    make_water_submit_heur()
