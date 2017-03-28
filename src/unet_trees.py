@@ -279,17 +279,4 @@ if __name__ == '__main__':
 
     save_model(model, "{batch}_{epoch}_{suffix}".format(batch=batch_size, epoch=nb_epoch, suffix=suffix))
     save_history(history, suffix)
-
-    suffix = 'trees_4_'
-    model.compile(optimizer=Nadam(lr=1e-4), loss=jaccard_coef_loss, metrics=['binary_crossentropy', jaccard_coef_int])
-    model.fit_generator(
-        batch_generator(X_train, y_train, batch_size, horizontal_flip=True, vertical_flip=True, swap_axis=True),
-        nb_epoch=nb_epoch,
-        verbose=1,
-        samples_per_epoch=batch_size * 400,
-        callbacks=callbacks,
-        )
-
-    save_model(model, "{batch}_{epoch}_{suffix}".format(batch=batch_size, epoch=nb_epoch, suffix=suffix))
-    save_history(history, suffix)
     f.close()
