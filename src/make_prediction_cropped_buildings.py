@@ -46,10 +46,10 @@ def flip_axis(x, axis):
 
 @jit
 def mask2poly(predicted_mask, threashold, x_scaler, y_scaler):
-    polygons = extra_functions.mask2polygons_layer(predicted_mask[0] > threashold, epsilon=0, min_area=10)
+    polygons = extra_functions.mask2polygons_layer(predicted_mask[0] > threashold, epsilon=0, min_area=5)
 
     polygons = shapely.affinity.scale(polygons, xfact=1.0 / x_scaler, yfact=1.0 / y_scaler, origin=(0, 0, 0))
-    return shapely.wkt.dumps(polygons)
+    return shapely.wkt.dumps(polygons.buffer(2.6e-5))
 
 
 for image_id in tqdm(test_ids):
@@ -82,8 +82,10 @@ for image_id in tqdm(test_ids):
                                                                num_masks=1,
                                                                num_channels=num_channels)
 
-    new_mask = (predicted_mask + flip_axis(predicted_mask_v, 1) + flip_axis(predicted_mask_h,
-                                                                            2) + predicted_mask_s.swapaxes(1, 2)) / 4.0
+    new_mask = np.power(predicted_mask *
+                        flip_axis(predicted_mask_v, 1) *
+                        flip_axis(predicted_mask_h, 2) *
+                        predicted_mask_s.swapaxes(1, 2), 0.25)
 
     x_scaler, y_scaler = extra_functions.get_scalers(H, W, x_max, y_min)
 
@@ -96,4 +98,4 @@ submission = pd.DataFrame(result, columns=['ImageId', 'ClassType', 'Multipolygon
 sample = sample.drop('MultipolygonWKT', 1)
 submission = sample.merge(submission, on=['ImageId', 'ClassType'], how='left').fillna('MULTIPOLYGON EMPTY')
 
-submission.to_csv('temp_building.csv', index=False)
+submission.to_csv('temp_building_3.csv', index=False)
