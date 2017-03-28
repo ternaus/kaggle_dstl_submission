@@ -6,12 +6,13 @@ import pandas as pd
 
 submissions = {0: 'temp_building.csv',
                1: 'temp_structures_4.csv',
-               2: 'temp_road.csv',
+               2: 'temp_road_4.csv',
                3: 'temp_track_100_0.3_geom.csv',
                4: 'temp_trees_2.csv',
                5: 'temp_crops_4.csv',
-               6: 'water_auto_indices_fast.csv',
-               7: 'water_auto_indices_slow.csv'}
+               6: 'temp_water_fast.csv',
+               7: 'temp_water_slow.csv'
+               }
 
 for class_index in submissions:
     submissions[class_index] = pd.read_csv(submissions[class_index])
