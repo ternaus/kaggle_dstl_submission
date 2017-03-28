@@ -122,7 +122,7 @@ def generate_mask(image_id, height, width, num_mask_channels=10, train=train_wkt
 
 def mask2polygons_layer(mask, epsilon=1.0, min_area=10.0):
     # first, find contours with cv2: it's much faster than shapely
-    image, contours, hierarchy = cv2.findContours(((mask == 1) * 255).astype(np.uint8), cv2.RETR_CCOMP, cv2.CHAIN_APPROX_TC89_KCOS)
+    contours, hierarchy = cv2.findContours(((mask == 1) * 255).astype(np.uint8), cv2.RETR_CCOMP, cv2.CHAIN_APPROX_TC89_KCOS)
 
     # create approximate contours to have reasonable submission size
     if epsilon != 0:
@@ -188,6 +188,13 @@ def fix_invalid_polygons(all_polygons):
 def _get_xmax_ymin(image_id):
     xmax, ymin = gs[gs['ImageId'] == image_id].iloc[0, 1:].astype(float)
     return xmax, ymin
+
+
+def get_shape(image_id, band=3):
+    if band == 3:
+        height = shapes.loc[shapes['image_id'] == image_id, 'height'].values[0]
+        width = shapes.loc[shapes['image_id'] == image_id, 'width'].values[0]
+        return height, width
 
 
 def read_image_16(image_id):
