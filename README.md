@@ -21,7 +21,7 @@ To train final models you will need the following:
 - Required hardware: 
     - Any decent modern computer with x86-64 CPU, 
     - Fair amount of RAM (we had about 32Gb and 128Gb in our boxes, however, not all memory was used) 
-    - Powerful GPU: we used Nvidia Titan X with 12Gb of RAM and Nvidia GeForce GTX 1080 with 8Gb of RAM.
+    - Powerful GPU: we used Nvidia Titan X (Pascal) with 12Gb of RAM and Nvidia GeForce GTX 1080 with 8Gb of RAM.
 
 ### Main software for training neural networks:
 - Python 2.7 (preferable and fully tested) or Python 3.5
@@ -53,8 +53,7 @@ data / theree_band / *
 ```
 - Source code
 ```
-src / water / *
-    / *.py
+src / *.py
 
 ```
     
@@ -65,39 +64,43 @@ src / water / *
 # Train models
 Each class in our solution has separate neural network, so it requires running of several distinct models one by one (or in parallel if there are enough computing resources)
 
-`python unet_buidings.py`
+1. Run `python unet_buidings.py`
+2. Run `python unet_structures.py`
+3. Run `python unet_road.py`
+4. Run `python unet_track.py`
+5. Run `python unet_trees.py`
+6. Run `python unet_crops.py`
 
-`python unet_structures.py`
+For water predictions we used different method and it can be created by running:
 
-`python unet_road.py`
-
-`python unet_track.py`
-
-`python unet_trees.py`
-
-`python unet_crops.py`
-
-For water predictions we used different method and it can be created by running `python make_water.py` inside `water` directory.
+7. Run `python fast_water.py`
+8. Run `python slow_water.py`
 
 After training finishes (it may require quite a long time depending on hardware used, in our case it was about 7 hours for each stage (50 epochs)) trained weights and model architectures are saved in `cache` directory and can be used by prediction scripts (see the next section).
 
 # Create predictions
 To create predictions run every make_prediction_cropped_*.py file in `src` dir. It could take considerable amount of time to generate all predictions as there are a lot of data in test and we use separate models for each class and use test time augmentation and cropping for the best model performance. On Titan X GPU each class took about 5 hours to get predictions.
 
-When all predictions are done they should be merged in a single file for submit:
-- Edit `merge_predictions.py` to include desired csv file for each class to be merged (example below):
+1. Run `python make_prediction_cropped_buildings.py`
+2. Run `python make_prediction_cropped_structures.py`
+3. Run `python make_prediction_cropped_track.py`
+4. Run `python make_prediction_cropped_road.py`
+5. Run `python make_prediction_cropped_trees.py`
+6. Run `python make_prediction_cropped_crops.py`
 
-```
-submissions = {0: 'temp_building.csv',
-               1: 'temp_structures.csv',
-               2: 'temp_road_4.csv',
-               3: 'temp_track_100_0.3_geom.csv',
-               4: 'temp_trees_4.csv',
-               5: 'temp_crops_4.csv',
-               6: 'water_auto_indices_fast.csv',
-               7: 'water_auto_indices_slow.csv'}
-```
+When all predictions are done they should be merged in a single file for submit:
 - Run `python merge_predictions.py`
+
+
+7. Run `python merge_predictions.py`
+The previous step will create file `joined.csv` that just merges predictions per class into the unified format.
+
+- Last step in the pipeline is to
+
+8. Run `python post_processing.py joined.csv`
+
+that will perform some cleaning of the overlapping classes (remove predictions of the slow water from fast water, all other predictions from buildings, etc)
+
 - Done!
 
 
