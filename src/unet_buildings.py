@@ -21,6 +21,7 @@ import datetime
 import os
 
 import random
+import threading
 
 from keras.models import model_from_json
 
@@ -158,10 +159,35 @@ def form_batch(X, y, batch_size):
         random_image = random.randint(0, X.shape[0] - 1)
 
         y_batch[i] = y[random_image, :, random_height: random_height + img_rows, random_width: random_width + img_cols]
-        X_batch[i] = X[random_image, :, random_height: random_height + img_rows, random_width: random_width + img_cols]
+        X_batch[i] = np.array(X[random_image, :, random_height: random_height + img_rows, random_width: random_width + img_cols])
     return X_batch, y_batch
 
 
+class threadsafe_iter:
+    """Takes an iterator/generator and makes it thread-safe by
+    serializing call to the `next` method of given iterator/generator.
+    """
+    def __init__(self, it):
+        self.it = it
+        self.lock = threading.Lock()
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        with self.lock:
+            return self.it.next()
+
+
+def threadsafe_generator(f):
+    """A decorator that takes a generator function and makes it thread-safe.
+    """
+    def g(*a, **kw):
+        return threadsafe_iter(f(*a, **kw))
+    return g
+
+
+@threadsafe_generator
 def batch_generator(X, y, batch_size, horizontal_flip=False, vertical_flip=False, swap_axis=False):
     while True:
         X_batch, y_batch = form_batch(X, y, batch_size)
@@ -202,9 +228,6 @@ def save_model(model, cross):
 
 
 def save_history(history, suffix):
-    if not os.path.isdir('history'):
-        os.mkdir('history')
-
     filename = 'history/history_' + suffix + '.csv'
     pd.DataFrame(history.history).to_csv(filename, index=False)
 
@@ -228,15 +251,13 @@ if __name__ == '__main__':
     print('[{}] Reading train...'.format(str(datetime.datetime.now())))
     f = h5py.File(os.path.join(data_path, 'train_16.h5'), 'r')
 
-    X_train = np.array(f['train'])
+    X_train = f['train']
 
     y_train = np.array(f['train_mask'])[:, 0]
     y_train = np.expand_dims(y_train, 1)
     print(y_train.shape)
 
     train_ids = np.array(f['train_ids'])
-
-    f.close()
 
     batch_size = 128
     nb_epoch = 50
@@ -253,20 +274,10 @@ if __name__ == '__main__':
                         verbose=1,
                         samples_per_epoch=batch_size * 400,
                         callbacks=callbacks,
+                        nb_worker=8
                         )
 
     save_model(model, "{batch}_{epoch}_{suffix}".format(batch=batch_size, epoch=nb_epoch, suffix=suffix))
     save_history(history, suffix)
 
-    suffix = 'buildings_4_'
-    model.compile(optimizer=Nadam(lr=1e-4), loss=jaccard_coef_loss, metrics=['binary_crossentropy', jaccard_coef_int])
-    model.fit_generator(
-        batch_generator(X_train, y_train, batch_size, horizontal_flip=True, vertical_flip=True, swap_axis=True),
-        nb_epoch=nb_epoch,
-        verbose=1,
-        samples_per_epoch=batch_size * 400,
-        callbacks=callbacks,
-        )
-
-    save_model(model, "{batch}_{epoch}_{suffix}".format(batch=batch_size, epoch=nb_epoch, suffix=suffix))
-    save_history(history, suffix)
+    f.close()
