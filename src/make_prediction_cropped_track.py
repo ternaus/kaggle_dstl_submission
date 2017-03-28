@@ -101,4 +101,4 @@ submission = pd.DataFrame(result, columns=['ImageId', 'ClassType', 'Multipolygon
 sample = sample.drop('MultipolygonWKT', 1)
 submission = sample.merge(submission, on=['ImageId', 'ClassType'], how='left').fillna('MULTIPOLYGON EMPTY')
 
-submission.to_csv('temp_track_100_0.5.csv', index=False)
+submission.to_csv('temp_track_100_0.3.csv', index=False)
