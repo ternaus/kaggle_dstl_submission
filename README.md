@@ -1,10 +1,15 @@
 # Winning Model Documentation
 Name: Vladimir Iglovikov
+
 LinkedIn: https://www.linkedin.com/in/iglovikov/
+
 Location: San-Francisco, United States
 
+
 Name: Sergey Mushinskiy
+
 LinkedIn: https://www.linkedin.com/in/sergeymushinskiy/
+
 Location: Angarsk, Russia
 
 Competition: Dstl Satellite Imagery Feature Detection
