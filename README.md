@@ -3,13 +3,9 @@ Name: Vladimir Iglovikov
 
 Location: San-Francisco, United States
 
-Email: iglovikov@gmail.com
-
 Name: Sergey Mushinskiy
 
 Location: Angarsk, Russia
-
-Email: cepera.ang@gmail.com	
 
 Competition: Dstl Satellite Imagery Feature Detection
 
