@@ -14,6 +14,7 @@ Location: Angarsk, Russia
 
 Competition: Dstl Satellite Imagery Feature Detection
 
+https://arxiv.org/abs/1706.06169
 
 # Prerequisites
 To train final models you will need the following:
