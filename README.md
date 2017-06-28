@@ -14,7 +14,9 @@ Location: Angarsk, Russia
 
 Competition: Dstl Satellite Imagery Feature Detection
 
-https://arxiv.org/abs/1706.06169
+
+Blog post: http://blog.kaggle.com/2017/05/09/dstl-satellite-imagery-competition-3rd-place-winners-interview-vladimir-sergey/
+Preprint: https://arxiv.org/abs/1706.06169
 
 # Prerequisites
 To train final models you will need the following:
