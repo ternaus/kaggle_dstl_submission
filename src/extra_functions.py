@@ -122,7 +122,7 @@ def generate_mask(image_id, height, width, num_mask_channels=10, train=train_wkt
 
 def mask2polygons_layer(mask, epsilon=1.0, min_area=10.0):
     # first, find contours with cv2: it's much faster than shapely
-    contours, hierarchy = cv2.findContours(((mask == 1) * 255).astype(np.uint8), cv2.RETR_CCOMP, cv2.CHAIN_APPROX_TC89_KCOS)
+    _, contours, hierarchy = cv2.findContours(((mask == 1) * 255).astype(np.uint8), cv2.RETR_CCOMP, cv2.CHAIN_APPROX_TC89_KCOS)
 
     # create approximate contours to have reasonable submission size
     if epsilon != 0:
