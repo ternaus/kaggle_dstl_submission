@@ -4,10 +4,19 @@ Merge predictions
 
 
 from __future__ import division
-from shapely.geometry import MultiPolygon
 
+#avoid to set the $DISPLAY
+import matplotlib
+matplotlib.use('Agg')
+
+from shapely.geometry import MultiPolygon
 from pylab import *
 import pandas as pd
+import matplotlib
+
+
+	
+import matplotlib.pyplot as plt
 
 rcParams['figure.figsize'] = 20, 20
 
