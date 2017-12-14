@@ -19,12 +19,21 @@ Blog post: http://blog.kaggle.com/2017/05/09/dstl-satellite-imagery-competition-
 If you find this code useful for your publications, please consider citing
 
 ```
-@inproceedings{dstl2017,
-    title     = {Satellite Imagery Feature Detection using Deep Convolutional Neural Network: A Kaggle Competition},
-    author    = {Vladimir Iglovikov and Sergey Mushinskiy and Vladimir Osin},
-    journal = {arxiv.org},
-    year      = {2017},
-    url = {https://arxiv.org/abs/1706.06169}
+@article{DBLP:journals/corr/IglovikovMO17,
+  author    = {Vladimir Iglovikov and
+               Sergey Mushinskiy and
+               Vladimir Osin},
+  title     = {Satellite Imagery Feature Detection using Deep Convolutional Neural
+               Network: {A} Kaggle Competition},
+  journal   = {CoRR},
+  volume    = {abs/1706.06169},
+  year      = {2017},
+  url       = {http://arxiv.org/abs/1706.06169},
+  archivePrefix = {arXiv},
+  eprint    = {1706.06169},
+  timestamp = {Mon, 03 Jul 2017 13:29:02 +0200},
+  biburl    = {http://dblp.org/rec/bib/journals/corr/IglovikovMO17},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
 }
 ```
 
