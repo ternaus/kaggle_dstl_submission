@@ -14,9 +14,19 @@ Location: Angarsk, Russia
 
 Competition: Dstl Satellite Imagery Feature Detection
 
-
 Blog post: http://blog.kaggle.com/2017/05/09/dstl-satellite-imagery-competition-3rd-place-winners-interview-vladimir-sergey/
-Preprint: https://arxiv.org/abs/1706.06169
+
+If you find this code useful for your publications, please consider citing
+
+```
+@inproceedings{dstl2017,
+    title     = {Satellite Imagery Feature Detection using Deep Convolutional Neural Network: A Kaggle Competition},
+    author    = {Vladimir Iglovikov and Sergey Mushinskiy and Vladimir Osin},
+    journal = {arxiv.org},
+    year      = {2017},
+    url = {https://arxiv.org/abs/1706.06169}
+}
+```
 
 # Prerequisites
 To train final models you will need the following:
