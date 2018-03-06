@@ -1,3 +1,10 @@
+## THIS REPO IS UNMAINTEINED AND MOSTLY REMAIN AS HISTORIC ARTIFACT.
+
+### Please, take a look at versions of software we used to generate our result -- it is ancient now. Do not expect this code to run on Keras above version 1.2.2 and so on. It will not run out of the box, we wouldn't answer any issues about it, sorry. If you manage to run this code on newer versions -- please, feel free to open pull request, we will merge it for the public good. 
+
+## Take a look at https://github.com/ternaus/TernausNet if you need more up-to-date sergmentation solution.
+
+
 # Winning Model Documentation
 Name: Vladimir Iglovikov
 
