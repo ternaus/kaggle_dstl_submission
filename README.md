@@ -31,16 +31,11 @@ If you find this code useful for your publications, please consider citing
                Sergey Mushinskiy and
                Vladimir Osin},
   title     = {Satellite Imagery Feature Detection using Deep Convolutional Neural
-               Network: {A} Kaggle Competition},
-  journal   = {CoRR},
+               Network: A Kaggle Competition},  
   volume    = {abs/1706.06169},
-  year      = {2017},
-  url       = {http://arxiv.org/abs/1706.06169},
+  year      = {2017},  
   archivePrefix = {arXiv},
-  eprint    = {1706.06169},
-  timestamp = {Mon, 03 Jul 2017 13:29:02 +0200},
-  biburl    = {http://dblp.org/rec/bib/journals/corr/IglovikovMO17},
-  bibsource = {dblp computer science bibliography, http://dblp.org}
+  eprint    = {1706.06169},     
 }
 ```
 
